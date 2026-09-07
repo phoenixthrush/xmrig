@@ -1,0 +1,29 @@
+[package]
+name = "xmrig"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+flate2 = { version = "1.1.10", default-features = false, features = ["rust_backend"] }
+tempfile = { version = "3.27.0", default-features = false }
+whoami = { version = "1.6", default-features = false }
+serde_json = { version = "1", default-features = false, features = ["std"] }
+
+[target.'cfg(not(windows))'.dependencies]
+dirs = { version = "7.0.0", default-features = false }
+tar = { version = "0.4.46", default-features = false }
+
+[target.'cfg(windows)'.dependencies]
+zip = { version = "8.6.0", default-features = false, features = ["deflate-flate2"] }
+
+[build-dependencies]
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+serde = { version = "1", default-features = false, features = ["derive"] }
+sha2 = { version = "0.10", default-features = false }
+
+[profile.release]
+opt-level = "z"     # Optimize for size.
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations.
+panic = "abort"     # Abort on panic
+strip = true        # Automatically strip symbols from the binary.
